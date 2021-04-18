@@ -25,13 +25,51 @@ class Twitter {
         fetchData.getPost()
             .then(data => {
                 data.forEach(this.tweets.addPost)
+                this.showAllPost()
             })
 
-        console.log(this.tweets)
+
     }
 
-    renderPosts() {
-
+    renderPosts(tweets) {
+        this.elements.listElem.textContent = ''
+        console.log(tweets)
+        tweets.forEach(({id, userName, nickname, text, img, likes, getDate}) => {
+            this.elements.listElem.insertAdjacentHTML('beforeend',
+                `
+                
+        <li>
+        <article class="tweet">
+            <div class="row">
+            <img class="avatar" src="images/${nickname}.jpg" alt="Аватар пользователя ${nickname}">
+            <div class="tweet__wrapper">
+    <header class="tweet__header">
+        <h3 class="tweet-author">${userName}
+        <span class="tweet-author__add tweet-author__nickname">@${nickname}</span>
+        <time class="tweet-author__add tweet__date">${getDate()}</time>
+        </h3>
+        <button class="tweet__delete-button chest-icon" data-id="${id}"></button>
+    </header>
+    <div class="tweet-post">
+        <p class="tweet-post__text">${text}</p>
+         ${img ? `
+                    <figure class="tweet-post__image">
+                      <img src="${img}"
+                        alt="иллюстрация из поста ${nickname}">
+                    </figure>` :
+                    ''}
+        </div>
+        </div>
+        </div>
+        <footer>
+        <button class="tweet__like">
+           ${likes}
+           </button>
+        </footer>
+        </article>
+    </li>
+                `)
+        })
     }
 
     showUserPost() {
@@ -43,7 +81,7 @@ class Twitter {
     }
 
     showAllPost() {
-
+        this.renderPosts(this.tweets.posts)
     }
 
     openModal() {
@@ -53,16 +91,18 @@ class Twitter {
 
 
 class Posts {
-    constructor({ posts = [] } = {}) {
+    constructor({posts = []} = {}) {
         this.posts = posts
     }
 
     addPost = (tweets) => {
-        this.posts.push(tweets)
+        this.posts.push(new Post(tweets))
     }
+
     deletePost(id) {
 
     }
+
     likePost(id) {
 
     }
@@ -70,10 +110,10 @@ class Posts {
 
 
 class Post {
-    constructor({ id, userName, nickName, postDate, text, img, likes = 0 }) {
+    constructor({id, userName, nickname, postDate, text, img, likes = 0}) {
         this.id = id || this.generateID()
         this.userName = userName
-        this.nickName = nickName
+        this.nickname = nickname
         this.postDate = postDate ? new Date(postDate) : new Date()
         this.text = text
         this.img = img
@@ -95,7 +135,7 @@ class Post {
         return Math.random().toString(32).substring(2, 9) + (+new Date).toString(32)
     }
 
-    getDate() {
+    getDate = () => {
 
         const options = {
             year: 'numeric',
@@ -114,7 +154,5 @@ const twitter = new Twitter({
     listElem: '.tweet-list'
 })
 
-twitter.tweets.addPost({
 
-})
 
