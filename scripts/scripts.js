@@ -15,8 +15,9 @@ class FetchData {
 
 
 class Twitter {
-    constructor({ listElem, modalElems, tweetElems }) {
+    constructor({ user, listElem, modalElems, tweetElems }) {
         const fetchData = new FetchData()
+        this.user = user
         this.tweets = new Posts()
         this.elements = {
             listElem: document.querySelector(listElem),
@@ -115,6 +116,10 @@ class Twitter {
         if (overlay) {
             overlayElem.addEventListener('click', closeModal.bind(null, overlayElem))
         }
+
+        this.handlerModal.closeModal = () => {
+            modalElem.style.display = 'none'
+        }
     }
 
     addTweet({ text, img, submit }) {
@@ -123,15 +128,27 @@ class Twitter {
         const submitElem = document.querySelector(submit)
 
         let imgUrl = ''
+        let tempString = textElem.innerHTML
 
         submitElem.addEventListener('click', () => {
             this.tweets.addPost({
-                userName: 'Евгений',
-                nickname: 'YouJeen',
+                userName: this.user.name,
+                nickname: this.user.nick,
                 text: textElem.innerHTML,
                 img: imgUrl
             })
             this.showAllPost()
+            this.handlerModal.closeModal()
+        })
+
+        textElem.addEventListener('click', () => {
+            if (textElem.innerHTML === tempString ) {
+                textElem.innerHTML = ''
+            }
+        })
+
+        imgElem.addEventListener('click', () => {
+            imgUrl = prompt('Введите адрес картинки')
         })
     }
 }
@@ -199,6 +216,10 @@ class Post {
 
 const twitter = new Twitter({
     listElem: '.tweet-list',
+    user: {
+        name: "Eugene",
+        nick: 'YouJeen'
+    },
     modalElems: [
         {
             button: '.header__link_tweet',
