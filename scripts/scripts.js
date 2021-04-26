@@ -15,12 +15,13 @@ class FetchData {
 
 
 class Twitter {
-    constructor({ listElem, modalElems }) {
+    constructor({ listElem, modalElems, tweetElems }) {
         const fetchData = new FetchData()
         this.tweets = new Posts()
         this.elements = {
             listElem: document.querySelector(listElem),
-            modal: modalElems
+            modal: modalElems,
+            tweetElems
         }
 
         fetchData.getPost()
@@ -30,6 +31,7 @@ class Twitter {
             })
 
         this.elements.modal.forEach(this.handlerModal, this)
+        this.elements.tweetElems.forEach(this.addTweet, this)
 
 
     }
@@ -114,6 +116,24 @@ class Twitter {
             overlayElem.addEventListener('click', closeModal.bind(null, overlayElem))
         }
     }
+
+    addTweet({ text, img, submit }) {
+        const textElem = document.querySelector(text)
+        const imgElem = document.querySelector(img)
+        const submitElem = document.querySelector(submit)
+
+        let imgUrl = ''
+
+        submitElem.addEventListener('click', () => {
+            this.tweets.addPost({
+                userName: 'Евгений',
+                nickname: 'YouJeen',
+                text: textElem.innerHTML,
+                img: imgUrl
+            })
+            this.showAllPost()
+        })
+    }
 }
 
 
@@ -123,7 +143,7 @@ class Posts {
     }
 
     addPost = (tweets) => {
-        this.posts.push(new Post(tweets))
+        this.posts.unshift(new Post(tweets))
     }
 
     deletePost(id) {
@@ -185,6 +205,13 @@ const twitter = new Twitter({
             modal: '.modal',
             overlay: '.overlay',
             close: '.modal-close__btn'
+        }
+    ],
+    tweetElems: [
+        {
+            text: '.modal .tweet-form__text',
+            img: '.modal .tweet-img__btn',
+            submit: '.modal .tweet-form__btn'
         }
     ]
 })
