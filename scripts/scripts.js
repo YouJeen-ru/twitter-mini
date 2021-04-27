@@ -139,6 +139,7 @@ class Twitter {
             })
             this.showAllPost()
             this.handlerModal.closeModal()
+            textElem.innerHTML = tempString
         })
 
         textElem.addEventListener('click', () => {
@@ -233,6 +234,11 @@ const twitter = new Twitter({
             text: '.modal .tweet-form__text',
             img: '.modal .tweet-img__btn',
             submit: '.modal .tweet-form__btn'
+        },
+        {
+            text: '.tweet-form__text',
+            img: '.tweet-img__btn',
+            submit: '.tweet-form__btn'
         }
     ]
 })
