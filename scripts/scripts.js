@@ -179,7 +179,7 @@ class Post {
         this.id = id || this.generateID()
         this.userName = userName
         this.nickname = nickname
-        this.postDate = postDate ? new Date(postDate) : new Date()
+        this.postDate = postDate ? this.correctDate(postDate) : new Date()
         this.text = text
         this.img = img
         this.likes = likes
@@ -211,6 +211,13 @@ class Post {
         }
 
         return this.postDate.toLocaleString('ru-RU', options)
+    }
+
+    correctDate(date) {
+        if(isNaN(Date.parse(date))) {
+            date = date.replace(/\./g, '/')
+        }
+        return new Date(date)
     }
 
 }
