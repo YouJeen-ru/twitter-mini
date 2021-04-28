@@ -15,7 +15,15 @@ class FetchData {
 
 
 class Twitter {
-    constructor({ user, listElem, modalElems, tweetElems }) {
+    constructor({
+                    user,
+                    listElem,
+                    modalElems,
+                    tweetElems,
+                    classDeleteTweet,
+                    classLikeTweet,
+
+                }) {
         const fetchData = new FetchData()
         this.user = user
         this.tweets = new Posts()
@@ -23,6 +31,11 @@ class Twitter {
             listElem: document.querySelector(listElem),
             modal: modalElems,
             tweetElems
+        }
+
+        this.class = {
+            classDeleteTweet,
+            classLikeTweet
         }
 
         fetchData.getPost()
@@ -33,6 +46,8 @@ class Twitter {
 
         this.elements.modal.forEach(this.handlerModal, this)
         this.elements.tweetElems.forEach(this.addTweet, this)
+
+        this.elements.listElem.addEventListener('click', this.handlerTweet)
 
 
     }
@@ -90,7 +105,7 @@ class Twitter {
         this.renderPosts(this.tweets.posts)
     }
 
-    handlerModal({ button, modal, overlay , close }) {
+    handlerModal({button, modal, overlay, close}) {
         const buttonElem = document.querySelector(button)
         const modalElem = document.querySelector(modal)
         const overlayElem = document.querySelector(overlay)
@@ -122,7 +137,7 @@ class Twitter {
         }
     }
 
-    addTweet({ text, img, submit }) {
+    addTweet({text, img, submit}) {
         const textElem = document.querySelector(text)
         const imgElem = document.querySelector(img)
         const submitElem = document.querySelector(submit)
@@ -143,7 +158,7 @@ class Twitter {
         })
 
         textElem.addEventListener('click', () => {
-            if (textElem.innerHTML === tempString ) {
+            if (textElem.innerHTML === tempString) {
                 textElem.innerHTML = ''
             }
         })
@@ -151,6 +166,18 @@ class Twitter {
         imgElem.addEventListener('click', () => {
             imgUrl = prompt('Введите адрес картинки')
         })
+    }
+
+    handlerTweet = event => {
+        const target = event.target
+        if (target.classList.contains(this.class.classDeleteTweet)) {
+            this.tweets.deletePost(target.dataset.id)
+            this.showAllPost()
+        }
+
+        if (target.classList.contains(this.class.classLikeTweet.like)) {
+
+        }
     }
 }
 
@@ -165,7 +192,7 @@ class Posts {
     }
 
     deletePost(id) {
-
+        this.posts = this.posts.filter(item => item.id !== id)
     }
 
     likePost(id) {
@@ -214,7 +241,7 @@ class Post {
     }
 
     correctDate(date) {
-        if(isNaN(Date.parse(date))) {
+        if (isNaN(Date.parse(date))) {
             date = date.replace(/\./g, '/')
         }
         return new Date(date)
@@ -247,7 +274,12 @@ const twitter = new Twitter({
             img: '.tweet-img__btn',
             submit: '.tweet-form__btn'
         }
-    ]
+    ],
+    classDeleteTweet: 'tweet__delete-button',
+    classLikeTweet: {
+        like: 'tweet__like',
+        active: 'tweet__like_active'
+    }
 })
 
 
