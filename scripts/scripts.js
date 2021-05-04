@@ -22,6 +22,7 @@ class Twitter {
                     tweetElems,
                     classDeleteTweet,
                     classLikeTweet,
+                    sortElem,
 
                 }) {
         const fetchData = new FetchData()
@@ -29,6 +30,7 @@ class Twitter {
         this.tweets = new Posts()
         this.elements = {
             listElem: document.querySelector(listElem),
+            sortElem: document.querySelector(sortElem),
             modal: modalElems,
             tweetElems
         }
@@ -37,6 +39,8 @@ class Twitter {
             classDeleteTweet,
             classLikeTweet
         }
+
+        this.sortDate = true
 
         fetchData.getPost()
             .then(data => {
@@ -48,14 +52,15 @@ class Twitter {
         this.elements.tweetElems.forEach(this.addTweet, this)
 
         this.elements.listElem.addEventListener('click', this.handlerTweet)
+        this.elements.sortElem.addEventListener('click', this.changeSort)
 
 
     }
 
-    renderPosts(tweets) {
+    renderPosts(posts) {
+        const sortPost = posts.sort(this.sortFields())
         this.elements.listElem.textContent = ''
-        console.log(tweets)
-        tweets.forEach(({
+        sortPost.forEach(({
                             id,
                             userName,
                             nickname,
@@ -64,7 +69,7 @@ class Twitter {
                             likes,
                             getDate,
                             liked
-        }) => {
+                        }) => {
             this.elements.listElem.insertAdjacentHTML('beforeend',
                 `
                 
@@ -192,6 +197,23 @@ class Twitter {
             this.showAllPost()
         }
     }
+
+    changeSort = () => {
+        this.sortDate = !this.sortDate
+        this.showAllPost()
+    }
+
+    sortFields() {
+        if (this.sortDate) {
+            return (a, b) => {
+                const dateA = new Date(a.postDate)
+                const dateB = new Date(b.postDate)
+                return dateB - dateA
+            }
+        }  else {
+            return (a, b) => b.likes - a.likes
+        }
+    }
 }
 
 
@@ -296,7 +318,8 @@ const twitter = new Twitter({
     classLikeTweet: {
         like: 'tweet__like',
         active: 'tweet__like_active'
-    }
+    },
+    sortElem: '.header__link_sort'
 })
 
 
